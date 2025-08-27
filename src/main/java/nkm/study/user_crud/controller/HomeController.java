@@ -29,7 +29,6 @@ public class HomeController {
 
     @PostMapping("/signup")
     public String signup(UserForm user, Model model){
-
         if(!user.getPassword().equals(user.getConfirmPassword())){
             model.addAttribute("error", "비밀번호가 틀림");
             return "signup";
@@ -37,7 +36,7 @@ public class HomeController {
 
         User newUser = new User();
         newUser.setName(user.getName());
-        newUser.setPassword(user.getPassword()); // 암호화해야됨
+        newUser.setPassword(user.getPassword());
         newUser.setEmail(user.getEmail());
         userService.createUser(newUser);
         return "redirect:/";
