@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .signup-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+        .signup-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .signup-container input[type="text"],
+        .signup-container input[type="email"],
+        .signup-container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .signup-container button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #2196F3;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .signup-container button.login {
+            background-color: #4CAF50;
+        }
+
+        .signup-container button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div class="signup-container">
+    <h2>회원가입</h2>
+
+    <div th:if="${error}" style="color: red; margin-bottom: 10px;">
+        <p th:text="${error}"></p>
+    </div>
+
+    <form action="/signup" method="post">
+        <input type="text" name="name" placeholder="이름" required>
+        <input type="email" name="email" placeholder="이메일" required>
+        <input type="password" name="password" placeholder="비밀번호" required>
+        <input type="password" name="confirmPassword" placeholder="비밀번호 확인" required>
+        <button type="submit">회원가입</button>
+    </form>
+    <button class="login" onclick="location.href='/'">로그인 페이지로</button>
+</div>
+</body>
+</html>

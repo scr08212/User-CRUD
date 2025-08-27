@@ -12,8 +12,14 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(User user){
-        return userRepository.save(user);
+    public Long createUser(User user){
+
+        userRepository.findByEmail(user.getEmail())
+            .ifPresent(x->{
+                throw new IllegalStateException("이미 가입된 이메일입니다.");
+            });
+        userRepository.save(user);
+        return user.getId();
     }
 
     public User deleteUser(User user){

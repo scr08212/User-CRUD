@@ -1,12 +1,13 @@
 package nkm.study.user_crud.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Table(name = "USERS")
 @Getter
-@AllArgsConstructor
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
