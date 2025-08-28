@@ -14,6 +14,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public User validateLogin(String email, String password) {
+
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(()->new IllegalStateException("사용자를 찾을 수 없습니다."));
+
+        if(!passwordEncoder.matches(password, currentUser.getPassword())){
+            throw new IllegalStateException("비밀번호가 틀립니다.");
+        }
+
+        return currentUser;
+    }
+
     public User createUser(User user){
         validateEmail(user.getEmail());
 

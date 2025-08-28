@@ -19,6 +19,38 @@ class UserServiceTest {
     @Autowired
     private UserRepository userRepository;
 
+    @DisplayName("로그인 비번 틀림")
+    @Test
+    void validateLogin_wrongPassword(){
+        User user1 = new User();
+        user1.setName("user1");
+        user1.setEmail("user1@gmail.com");
+        user1.setPassword("password");
+        userService.createUser(user1);
+
+        IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
+            userService.validateLogin("user1@gmail.com", "password");
+        });
+
+        Assertions.assertThat(e.getMessage()).isEqualTo("비밀번호가 틀립니다.");
+    }
+
+    @DisplayName("로그인 사용자 없음")
+    @Test
+    void validateLogin_wrongEmail(){
+        User user1 = new User();
+        user1.setName("user1");
+        user1.setEmail("user2@gmail.com");
+        user1.setPassword("password");
+        userService.createUser(user1);
+
+        IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
+            userService.validateLogin("user1@gmail.com", "password");
+        });
+
+        Assertions.assertThat(e.getMessage()).isEqualTo("사용자를 찾을 수 없습니다.");
+    }
+
     @DisplayName("회원가입시 중복 이메일")
     @Test
     void signup_emailDuplicated() {
