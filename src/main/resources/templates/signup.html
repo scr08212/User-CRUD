@@ -66,11 +66,12 @@
         <p th:text="${error}"></p>
     </div>
 
-    <form action="/signup" method="post">
-        <input type="text" name="name" placeholder="이름" required>
+    <form action="/signupProc" method="post">
+        <input type="text" name="username" placeholder="이름" required>
         <input type="email" name="email" placeholder="이메일" required>
         <input type="password" name="password" placeholder="비밀번호" required>
         <input type="password" name="confirmPassword" placeholder="비밀번호 확인" required>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <button type="submit">회원가입</button>
     </form>
     <button class="login" onclick="location.href='/'">로그인 페이지로</button>

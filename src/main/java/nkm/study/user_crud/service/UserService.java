@@ -6,7 +6,6 @@ import nkm.study.user_crud.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,16 +25,6 @@ public class UserService {
         return currentUser;
     }
 
-    public User createUser(User user){
-        validateEmail(user.getEmail());
-
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-
-        userRepository.save(user);
-        return user;
-    }
-
     public User updateUser(User user){
         User currentUser = userRepository.findById(user.getId())
                 .orElseThrow(()->new IllegalStateException("사용자를 찾을 수 없습니다."));
@@ -45,8 +34,8 @@ public class UserService {
             currentUser.setEmail(user.getEmail());
         }
 
-        if(!currentUser.getName().equals(user.getName())){
-            currentUser.setName(user.getName());
+        if(!currentUser.getUsername().equals(user.getUsername())){
+            currentUser.setUsername(user.getUsername());
         }
 
         if(!user.getPassword().isEmpty()){
@@ -60,10 +49,6 @@ public class UserService {
     public User deleteUser(User user){
         userRepository.delete(user);
         return user;
-    }
-
-    public List<User> findAll(){
-        return userRepository.findAll();
     }
 
     private void validateEmail(String email){

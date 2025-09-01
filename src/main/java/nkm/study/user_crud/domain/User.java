@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "USERS")
+@Table(name="user_table")
 @Getter
 @Setter
 public class User {
@@ -13,14 +13,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 255)
-    private String name;
+    private String username;
 
-    @Column(nullable = false, length = 255)
+    @Column(unique = true)
+    private String email;
+
     private String password;
 
-    @Column(nullable = false, unique = true, length = 255)
-    private String email;
+    private String role;
 
     public User() {
     }

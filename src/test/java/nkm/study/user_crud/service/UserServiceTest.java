@@ -2,6 +2,7 @@ package nkm.study.user_crud.service;
 
 import jakarta.transaction.Transactional;
 import nkm.study.user_crud.domain.User;
+import nkm.study.user_crud.domain.dto.UserDTO;
 import nkm.study.user_crud.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UserServiceTest {
 
     @Autowired
+    private SignUpService signUpService;
+
+    @Autowired
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
@@ -22,11 +26,11 @@ class UserServiceTest {
     @DisplayName("로그인 비번 틀림")
     @Test
     void validateLogin_wrongPassword(){
-        User user1 = new User();
-        user1.setName("user1");
+        UserDTO user1 = new UserDTO();
+        user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
-        userService.createUser(user1);
+        signUpService.signUpUser(user1);
 
         IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
             userService.validateLogin("user1@gmail.com", "password");
@@ -38,11 +42,11 @@ class UserServiceTest {
     @DisplayName("로그인 사용자 없음")
     @Test
     void validateLogin_wrongEmail(){
-        User user1 = new User();
-        user1.setName("user1");
+        UserDTO user1 = new UserDTO();
+        user1.setUsername("user1");
         user1.setEmail("user2@gmail.com");
         user1.setPassword("password");
-        userService.createUser(user1);
+        signUpService.signUpUser(user1);
 
         IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
             userService.validateLogin("user1@gmail.com", "password");
@@ -55,20 +59,20 @@ class UserServiceTest {
     @Test
     void signup_emailDuplicated() {
         // given
-        User user1 = new User();
-        user1.setName("user1");
+        UserDTO user1 = new UserDTO();
+        user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
-        userService.createUser(user1);
+        signUpService.signUpUser(user1);
 
-        User user2 = new User();
-        user2.setName("user2");
+        UserDTO user2 = new UserDTO();
+        user2.setUsername("user2");
         user2.setEmail("user1@gmail.com");
         user2.setPassword("password");
 
         // when
         IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
-            userService.createUser(user2);
+            signUpService.signUpUser(user2);
         });
 
         // then
@@ -79,13 +83,13 @@ class UserServiceTest {
     @Test
     void signup_passwordEncoded() {
         // given
-        User user1 = new User();
-        user1.setName("user1");
+        UserDTO user1 = new UserDTO();
+        user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
 
         // when
-        User savedUser = userService.createUser(user1);
+        User savedUser = signUpService.signUpUser(user1);
 
         // then
         Assertions.assertThat(savedUser.getPassword()).isNotEqualTo("password");
@@ -95,47 +99,47 @@ class UserServiceTest {
     @DisplayName("유저 단건 조회 테스트")
     @Test
     void findUserByEmail() {
-        User user1 = new User();
-        user1.setName("user1");
+        UserDTO user1 = new UserDTO();
+        user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
-        userService.createUser(user1);
+        signUpService.signUpUser(user1);
 
         User savedUser = userRepository.findByEmail(user1.getEmail()).get();
-        Assertions.assertThat(savedUser.getName()).isEqualTo(user1.getName());
+        Assertions.assertThat(savedUser.getUsername()).isEqualTo(user1.getUsername());
     }
 
     @DisplayName("유저 정보 업데이트 테스트")
     @Test
     void updateUser() {
         // given
-        User user1 = new User();
-        user1.setName("user1");
+        UserDTO user1 = new UserDTO();
+        user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
-        userService.createUser(user1);
+        User user = signUpService.signUpUser(user1);
 
         // when
-        user1.setName("user1 updated");
-        userService.updateUser(user1);
+        user1.setUsername("user1 updated");
+        userService.updateUser(user);
 
         // then
         User savedUser = userRepository.findByEmail(user1.getEmail()).get();
-        Assertions.assertThat(savedUser.getName()).isEqualTo(user1.getName());
+        Assertions.assertThat(savedUser.getUsername()).isEqualTo(user1.getUsername());
     }
 
     @DisplayName("유저 삭제 테스트")
     @Test
     void deleteUser() {
         // given
-        User user1 = new User();
-        user1.setName("user1");
+        UserDTO user1 = new UserDTO();
+        user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
-        userService.createUser(user1);
+        User user = signUpService.signUpUser(user1);
 
         // when
-        userService.deleteUser(user1);
+        userService.deleteUser(user);
 
         // then
         Assertions.assertThat(userRepository.findByEmail(user1.getEmail())).isEmpty();
