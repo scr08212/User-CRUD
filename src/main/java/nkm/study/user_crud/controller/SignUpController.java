@@ -1,42 +1,50 @@
 package nkm.study.user_crud.controller;
 
-import nkm.study.user_crud.domain.User;
+import jakarta.validation.Valid;
 import nkm.study.user_crud.domain.dto.UserDTO;
-import nkm.study.user_crud.service.SignUpService;
+import nkm.study.user_crud.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class SignUpController {
 
-    private SignUpService signUpService;
+    private final UserService userService;
 
-    SignUpController(SignUpService signUpService) {
-        this.signUpService = signUpService;
+    SignUpController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/signup")
-    public String signUp(){
+    public String signUp(Model model){
+        model.addAttribute("userDTO", new UserDTO());
         return "signup";
     }
 
     @PostMapping("/signup/process")
-    public String signUpProc(UserDTO userDTO, Model model){
+    public String signUpProc(@Valid UserDTO userDTO,
+                             BindingResult bindingResult,
+                             Model model){
+
+        if(bindingResult.hasErrors()){
+            return "signup";
+        }
+
         if(!userDTO.getPassword().equals(userDTO.getConfirmPassword())){
-            model.addAttribute("error", "비밀번호가 틀림");
+            model.addAttribute("error", "비밀번호가 일치하지 않습니다.");
             return "signup";
         }
 
         try{
-            signUpService.signUpUser(userDTO);
-        }
-        catch(Exception e){
+            userService.signUpUser(userDTO);
+        } catch(IllegalStateException e){
+            model.addAttribute("error",e.getMessage());
             return "signup";
         }
 
         return "redirect:/home";
     }
-
 }

@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.assertj.core.api.Assertions;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -16,12 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class UserServiceTest {
 
     @Autowired
-    private SignUpService signUpService;
-
-    @Autowired
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
+
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @DisplayName("로그인 비번 틀림")
     @Test
@@ -31,10 +33,10 @@ class UserServiceTest {
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
         user1.setConfirmPassword("password");
-        signUpService.signUpUser(user1);
+        userService.signUpUser(user1);
 
         IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
-            userService.validateLogin("user1@gmail.com", "password1");
+            validateLogin("user1@gmail.com", "password1");
         });
 
         Assertions.assertThat(e.getMessage()).isEqualTo("비밀번호가 틀립니다.");
@@ -47,10 +49,10 @@ class UserServiceTest {
         user1.setUsername("user1");
         user1.setEmail("user2@gmail.com");
         user1.setPassword("password");
-        signUpService.signUpUser(user1);
+        userService.signUpUser(user1);
 
         IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
-            userService.validateLogin("user1@gmail.com", "password");
+            validateLogin("user1@gmail.com", "password");
         });
 
         Assertions.assertThat(e.getMessage()).isEqualTo("사용자를 찾을 수 없습니다.");
@@ -64,7 +66,7 @@ class UserServiceTest {
         user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
-        signUpService.signUpUser(user1);
+        userService.signUpUser(user1);
 
         UserDTO user2 = new UserDTO();
         user2.setUsername("user2");
@@ -74,7 +76,7 @@ class UserServiceTest {
 
         // when
         IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
-            signUpService.signUpUser(user2);
+            userService.signUpUser(user2);
         });
 
         // then
@@ -92,7 +94,7 @@ class UserServiceTest {
         user1.setConfirmPassword("password");
 
         // when
-        User savedUser = signUpService.signUpUser(user1);
+        User savedUser = userService.signUpUser(user1);
 
         // then
         Assertions.assertThat(savedUser.getPassword()).isNotEqualTo("password");
@@ -107,7 +109,7 @@ class UserServiceTest {
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
         user1.setConfirmPassword("password");
-        signUpService.signUpUser(user1);
+        userService.signUpUser(user1);
 
         User savedUser = userRepository.findByEmail(user1.getEmail()).get();
         Assertions.assertThat(savedUser.getUsername()).isEqualTo(user1.getUsername());
@@ -122,12 +124,12 @@ class UserServiceTest {
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
         user1.setConfirmPassword("password");
-        User user = signUpService.signUpUser(user1);
+        User user = userService.signUpUser(user1);
 
         // when
         user1.setUsername("user1 updated");
 
-        userService.updateUser(user, user1);
+        userService.updateUser(user.getId(), user1);
 
         // then
         User savedUser = userRepository.findByEmail(user1.getEmail()).get();
@@ -143,12 +145,22 @@ class UserServiceTest {
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
         user1.setConfirmPassword("password");
-        User user = signUpService.signUpUser(user1);
+        User user = userService.signUpUser(user1);
 
         // when
-        userService.deleteUser(user);
+        userService.deleteUser(user.getId());
 
         // then
         Assertions.assertThat(userRepository.findByEmail(user1.getEmail())).isEmpty();
+    }
+
+    public User validateLogin(String email, String password) {
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(()->new IllegalStateException("사용자를 찾을 수 없습니다."));
+        if(!passwordEncoder.matches(password, currentUser.getPassword())){
+            throw new IllegalStateException("비밀번호가 틀립니다.");
+        }
+
+        return currentUser;
     }
 }

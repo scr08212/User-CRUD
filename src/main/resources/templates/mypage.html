@@ -1,57 +1,82 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<html lang="ko">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f6f9;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
 
         .mypage-container {
             background-color: #fff;
-            padding: 30px 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            width: 400px;
+            padding: 35px 45px;
+            border-radius: 10px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+            width: 380px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .mypage-container h2 {
             text-align: center;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .user-info {
+            padding: 15px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
             margin-bottom: 20px;
         }
 
-        .mypage-container .user-info {
-            margin-bottom: 20px;
-            padding: 10px;
-            background: #f1f1f1;
-            border-radius: 6px;
+        .user-info p {
+            margin: 5px 0;
+            font-size: 15px;
+            color: #444;
         }
 
         .mypage-container input[type="text"],
+        .mypage-container input[type="email"],
         .mypage-container input[type="password"] {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 4px;
+            padding: 12px;
+            margin: 8px 0 12px 0;
+            border-radius: 6px;
             border: 1px solid #ccc;
+            transition: all 0.2s ease-in-out;
+            font-size: 14px;
+        }
+
+        .mypage-container input:focus {
+            border-color: #2196F3;
+            outline: none;
+            box-shadow: 0 0 5px rgba(33,150,243,0.3);
         }
 
         .mypage-container button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-top: 12px;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
         }
 
         .mypage-container button.update {
@@ -59,9 +84,17 @@
             color: white;
         }
 
+        .mypage-container button.update:hover {
+            background-color: #45a049;
+        }
+
         .mypage-container button.delete {
             background-color: #f44336;
             color: white;
+        }
+
+        .mypage-container button.delete:hover {
+            background-color: #e53935;
         }
 
         .mypage-container button.logout {
@@ -69,10 +102,44 @@
             color: white;
         }
 
-        .mypage-container button:hover {
-            opacity: 0.9;
+        .mypage-container button.logout:hover {
+            background-color: #1976d2;
+        }
+
+        .mypage-container button.home {
+            background-color: #9c27b0;
+            color: white;
+        }
+
+        .mypage-container button.home:hover {
+            background-color: #7b1fa2;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 13px;
+            margin-bottom: 10px;
+            text-align: center;
         }
     </style>
+    <script>
+        function validateForm() {
+            const password = document.querySelector('input[name="password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirmPassword"]').value;
+
+            if (password && password.length < 8) {
+                alert("비밀번호는 최소 8자 이상이어야 합니다.");
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </head>
 <body>
 <div class="mypage-container">
@@ -83,11 +150,9 @@
         <p><strong>이름:</strong> [[${user.username}]]</p>
     </div>
 
-    <div th:if="${error}" style="color: red; margin-bottom: 10px;">
-        <p th:text="${error}"></p>
-    </div>
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
 
-    <form th:action="@{/mypage/update}" method="post">
+    <form th:action="@{/mypage/update}" method="post" onsubmit="return validateForm()">
         <input type="text" name="username" placeholder="새 사용자명 입력">
         <input type="email" name="email" placeholder="새 이메일 입력">
         <input type="password" name="password" placeholder="새 비밀번호 입력">
@@ -100,6 +165,7 @@
     </form>
 
     <button class="logout" onclick="location.href='/logout'">로그아웃</button>
+    <button class="home" onclick="location.href='/home'">홈화면으로 이동</button>
 </div>
 </body>
 </html>

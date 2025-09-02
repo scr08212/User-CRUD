@@ -5,51 +5,59 @@ import nkm.study.user_crud.domain.User;
 import nkm.study.user_crud.domain.dto.UserDTO;
 import nkm.study.user_crud.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public User validateLogin(String email, String password) {
-
-        User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(()->new IllegalStateException("사용자를 찾을 수 없습니다."));
-
-        if(!passwordEncoder.matches(password, currentUser.getPassword())){
-            throw new IllegalStateException("비밀번호가 틀립니다.");
+    // Create
+    @Transactional
+    public User signUpUser(UserDTO userDTO){
+        if(userRepository.existsByEmail(userDTO.getEmail())){
+            throw new IllegalStateException("이미 가입된 이메일입니다.");
         }
 
-        return currentUser;
+        User user = User.from(userDTO, passwordEncoder);
+
+        return userRepository.save(user);
     }
 
-    public User updateUser(User user, UserDTO userDTO) {
-        User currentUser = userRepository.findById(user.getId())
-                .orElseThrow(()->new IllegalStateException("사용자를 찾을 수 없습니다."));
+    // Read
+    public User findById(Long id){
+        return userRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("유저가 존재하지 않습니다."));
+    }
 
-        if(!userDTO.getEmail().isEmpty() && !currentUser.getEmail().equals(userDTO.getEmail())){
+    // Update
+    @Transactional
+    public void updateUser(Long userId, UserDTO userDTO) {
+        User user = findById(userId);
+
+        if(!userDTO.getEmail().isEmpty() && !user.getEmail().equals(userDTO.getEmail())){
             validateEmail(userDTO.getEmail());
-            currentUser.setEmail(userDTO.getEmail());
+            user.setEmail(userDTO.getEmail());
         }
 
-        if(!userDTO.getUsername().isEmpty() && !currentUser.getUsername().equals(userDTO.getUsername())){
-            currentUser.setUsername(userDTO.getUsername());
+        if(!userDTO.getUsername().isEmpty() && !user.getUsername().equals(userDTO.getUsername())){
+            user.setUsername(userDTO.getUsername());
         }
 
         if(!userDTO.getPassword().isEmpty()){
             String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
-            currentUser.setPassword(encodedPassword);
+            user.setPassword(encodedPassword);
         }
-
-        return userRepository.save(currentUser);
     }
 
-    public User deleteUser(User user){
-        userRepository.delete(user);
-        return user;
+    // Delete
+    @Transactional
+    public void deleteUser(Long userId){
+        userRepository.deleteById(userId);
     }
 
     private void validateEmail(String email){
@@ -57,9 +65,5 @@ public class UserService {
                 .ifPresent(x->{
                     throw new IllegalStateException("이미 가입된 이메일입니다.");
                 });
-    }
-
-    public User findById(Long id){
-        return userRepository.findById(id).orElseThrow(()-> new RuntimeException("유저가 존재하지 않음"));
     }
 }

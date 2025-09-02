@@ -41,7 +41,7 @@ public class MyPageController {
             return "mypage";
         }
 
-        userService.updateUser(user, userDTO);
+        userService.updateUser(user.getId(), userDTO);
 
         return "redirect:/mypage";
     }
@@ -50,7 +50,7 @@ public class MyPageController {
     public String deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails){
 
         User user = userDetails.getUser();
-        userService.deleteUser(user);
+        userService.deleteUser(user.getId());
 
         return "redirect:/logout";
     }
