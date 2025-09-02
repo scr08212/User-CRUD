@@ -51,13 +51,11 @@ public class SecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/home")
                 .invalidateHttpSession(true)
-                .permitAll()
+                .deleteCookies("JSESSIONID")
         ).sessionManagement((auth)-> auth
+                .sessionFixation().changeSessionId()
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-        ).sessionManagement((session)->session
-                .sessionFixation((sessionFixation) -> sessionFixation
-                        .newSession())
         );
 
         return http.build();
