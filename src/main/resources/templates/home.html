@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,12 +68,22 @@
     </style>
 </head>
 <body>
-<div class="home-container">
-    <h1>환영합니다 👋</h1>
+<div class="home-container" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <h1 sec:authorize="isAuthenticated()" th:text="'환영합니다 ' + ${username} + ' 👋'"></h1>
+    <h1 sec:authorize="isAnonymous()">환영합니다 👋</h1>
     <p>원하시는 메뉴를 선택하세요</p>
-    <button class="login" onclick="location.href='/login'">로그인</button>
-    <button class="signup" onclick="location.href='/signup'">회원가입</button>
-    <button class="mypage" onclick="location.href='/mypage'">마이페이지</button>
+
+    <!-- 비로그인 사용자 -->
+    <div sec:authorize="isAnonymous()">
+        <button class="login" onclick="location.href='/login'">로그인</button>
+        <button class="signup" onclick="location.href='/signup'">회원가입</button>
+    </div>
+
+    <!-- 로그인 사용자 -->
+    <div sec:authorize="isAuthenticated()">
+        <button class="logout" onclick="location.href='/logout'">로그아웃</button>
+        <button class="mypage" onclick="location.href='/mypage'">마이페이지</button>
+    </div>
 </div>
 </body>
 </html>
