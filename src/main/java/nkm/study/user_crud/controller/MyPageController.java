@@ -1,5 +1,6 @@
 package nkm.study.user_crud.controller;
 
+import jakarta.validation.Valid;
 import nkm.study.user_crud.domain.dto.UserDTO;
 import nkm.study.user_crud.security.CustomUserDetails;
 import nkm.study.user_crud.domain.User;
@@ -7,6 +8,7 @@ import nkm.study.user_crud.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,16 +34,18 @@ public class MyPageController {
 
     @PostMapping("/mypage/update")
     public String updateUser(@AuthenticationPrincipal CustomUserDetails userDetails,
-                             UserDTO userDTO,
+                             @Valid UserDTO userDTO,
+                             BindingResult bindingResult,
                              Model model){
-
-        User user = userDetails.getUser();
+        if(bindingResult.hasErrors()){
+            return "signup";
+        }
         if (!userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
             model.addAttribute("error", "비밀번호가 같지 않습니다");
             return "mypage";
         }
 
-        userService.updateUser(user.getId(), userDTO);
+        userService.updateUser(userDetails.getUser().getId(), userDTO);
 
         return "redirect:/mypage";
     }
@@ -49,9 +53,7 @@ public class MyPageController {
     @PostMapping("/mypage/delete")
     public String deleteUser(@AuthenticationPrincipal CustomUserDetails userDetails){
 
-        User user = userDetails.getUser();
-        userService.deleteUser(user.getId());
-
+        userService.deleteUser(userDetails.getUser().getId());
         return "redirect:/logout";
     }
 }
