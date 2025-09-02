@@ -22,16 +22,20 @@ public class SignUpController {
         return "signup";
     }
 
-    @PostMapping("/signupProc")
+    @PostMapping("/signup/process")
     public String signUpProc(UserDTO userDTO, Model model){
         if(!userDTO.getPassword().equals(userDTO.getConfirmPassword())){
             model.addAttribute("error", "비밀번호가 틀림");
             return "signup";
         }
 
-        User result = signUpService.signUpUser(userDTO);
-        if(result == null)
+        try{
+            signUpService.signUpUser(userDTO);
+        }
+        catch(Exception e){
             return "signup";
+        }
+
         return "redirect:/home";
     }
 

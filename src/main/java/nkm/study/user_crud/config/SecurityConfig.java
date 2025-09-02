@@ -1,6 +1,7 @@
 package nkm.study.user_crud.config;
 
 
+import nkm.study.user_crud.security.CustomAuthFailureHandler;
 import nkm.study.user_crud.security.CustomAuthSuccessHandler;
 import nkm.study.user_crud.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
@@ -15,12 +16,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
     private CustomAuthSuccessHandler customAuthSuccessHandler;
-
+    private CustomAuthFailureHandler customAuthFailureHandler;
     private CustomUserDetailsService userDetailsService;
 
     public SecurityConfig(CustomAuthSuccessHandler customAuthSuccessHandler,
+                          CustomAuthFailureHandler customAuthFailureHandler,
                           CustomUserDetailsService userDetailsService) {
         this.customAuthSuccessHandler = customAuthSuccessHandler;
+        this.customAuthFailureHandler = customAuthFailureHandler;
         this.userDetailsService = userDetailsService;
     }
 
@@ -32,17 +35,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        // 임시. 자세한건 조정해야함.
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/home", "/signup", "/signupProc", "/mypage/**")
+                .requestMatchers("/","/home", "/login","login/**","/signup", "/signup/**","/mypage", "/mypage/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
         ).formLogin((auth) -> auth
-                .loginPage("/home")
-                .loginProcessingUrl("/loginProc") // 해당 URL로 오는 요청을 하이재킹, 로그인 처리를 진행함!
+                .loginPage("/login")
+                .loginProcessingUrl("/login/process") // 해당 URL로 오는 요청을 하이재킹, 로그인 처리를 진행함!
                 .usernameParameter("email")
                 .passwordParameter("password")
+                .failureHandler(customAuthFailureHandler)
                 .successHandler(customAuthSuccessHandler)
         ).logout((auth)->auth
                 .logoutUrl("/logout")

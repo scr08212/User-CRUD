@@ -30,10 +30,11 @@ class UserServiceTest {
         user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
+        user1.setConfirmPassword("password");
         signUpService.signUpUser(user1);
 
         IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
-            userService.validateLogin("user1@gmail.com", "password");
+            userService.validateLogin("user1@gmail.com", "password1");
         });
 
         Assertions.assertThat(e.getMessage()).isEqualTo("비밀번호가 틀립니다.");
@@ -69,6 +70,7 @@ class UserServiceTest {
         user2.setUsername("user2");
         user2.setEmail("user1@gmail.com");
         user2.setPassword("password");
+        user2.setConfirmPassword("password");
 
         // when
         IllegalStateException e = assertThrows(IllegalStateException.class, ()->{
@@ -87,6 +89,7 @@ class UserServiceTest {
         user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
+        user1.setConfirmPassword("password");
 
         // when
         User savedUser = signUpService.signUpUser(user1);
@@ -103,6 +106,7 @@ class UserServiceTest {
         user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
+        user1.setConfirmPassword("password");
         signUpService.signUpUser(user1);
 
         User savedUser = userRepository.findByEmail(user1.getEmail()).get();
@@ -117,11 +121,13 @@ class UserServiceTest {
         user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
+        user1.setConfirmPassword("password");
         User user = signUpService.signUpUser(user1);
 
         // when
         user1.setUsername("user1 updated");
-        userService.updateUser(user);
+
+        userService.updateUser(user, user1);
 
         // then
         User savedUser = userRepository.findByEmail(user1.getEmail()).get();
@@ -136,6 +142,7 @@ class UserServiceTest {
         user1.setUsername("user1");
         user1.setEmail("user1@gmail.com");
         user1.setPassword("password");
+        user1.setConfirmPassword("password");
         User user = signUpService.signUpUser(user1);
 
         // when

@@ -2,6 +2,7 @@ package nkm.study.user_crud.service;
 
 import lombok.RequiredArgsConstructor;
 import nkm.study.user_crud.domain.User;
+import nkm.study.user_crud.domain.dto.UserDTO;
 import nkm.study.user_crud.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,21 +26,21 @@ public class UserService {
         return currentUser;
     }
 
-    public User updateUser(User user){
+    public User updateUser(User user, UserDTO userDTO) {
         User currentUser = userRepository.findById(user.getId())
                 .orElseThrow(()->new IllegalStateException("사용자를 찾을 수 없습니다."));
 
-        if(!currentUser.getEmail().equals(user.getEmail())){
-            validateEmail(user.getEmail());
-            currentUser.setEmail(user.getEmail());
+        if(!userDTO.getEmail().isEmpty() && !currentUser.getEmail().equals(userDTO.getEmail())){
+            validateEmail(userDTO.getEmail());
+            currentUser.setEmail(userDTO.getEmail());
         }
 
-        if(!currentUser.getUsername().equals(user.getUsername())){
-            currentUser.setUsername(user.getUsername());
+        if(!userDTO.getUsername().isEmpty() && !currentUser.getUsername().equals(userDTO.getUsername())){
+            currentUser.setUsername(userDTO.getUsername());
         }
 
-        if(!user.getPassword().isEmpty()){
-            String encodedPassword = passwordEncoder.encode(user.getPassword());
+        if(!userDTO.getPassword().isEmpty()){
+            String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
             currentUser.setPassword(encodedPassword);
         }
 
@@ -56,5 +57,9 @@ public class UserService {
                 .ifPresent(x->{
                     throw new IllegalStateException("이미 가입된 이메일입니다.");
                 });
+    }
+
+    public User findById(Long id){
+        return userRepository.findById(id).orElseThrow(()-> new RuntimeException("유저가 존재하지 않음"));
     }
 }

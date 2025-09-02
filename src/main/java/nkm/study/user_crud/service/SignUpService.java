@@ -1,6 +1,5 @@
 package nkm.study.user_crud.service;
 
-import jakarta.transaction.Transactional;
 import nkm.study.user_crud.domain.User;
 import nkm.study.user_crud.domain.dto.UserDTO;
 import nkm.study.user_crud.repository.UserRepository;
@@ -19,9 +18,8 @@ public class SignUpService {
     }
 
     public User signUpUser(UserDTO userDTO){
-
         if(userRepository.existsByEmail(userDTO.getEmail())){
-            return null;
+            throw new IllegalStateException("이미 가입된 이메일입니다.");
         }
 
         User user = new User();
