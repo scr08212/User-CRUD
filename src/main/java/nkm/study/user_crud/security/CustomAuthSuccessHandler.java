@@ -17,6 +17,6 @@ public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
-        response.sendRedirect("/mypage");
+        response.sendRedirect("/home");
     }
 }
