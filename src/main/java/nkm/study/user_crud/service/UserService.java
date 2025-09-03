@@ -41,17 +41,14 @@ public class UserService {
 
         if(!userDTO.getEmail().isEmpty() && !user.getEmail().equals(userDTO.getEmail())){
             validateEmail(userDTO.getEmail());
-            user.setEmail(userDTO.getEmail());
         }
 
-        if(!userDTO.getUsername().isEmpty() && !user.getUsername().equals(userDTO.getUsername())){
-            user.setUsername(userDTO.getUsername());
+        String encodedPassword = null;
+        if(userDTO.getPassword() != null &&  !userDTO.getPassword().isEmpty()){
+            encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         }
 
-        if(!userDTO.getPassword().isEmpty()){
-            String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
-            user.setPassword(encodedPassword);
-        }
+        user.update(userDTO.getUsername(), userDTO.getEmail(), encodedPassword);
     }
 
     // Delete
@@ -66,4 +63,6 @@ public class UserService {
                     throw new IllegalStateException("이미 가입된 이메일입니다.");
                 });
     }
+
+
 }

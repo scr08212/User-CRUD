@@ -35,6 +35,18 @@ public class User {
     public User() {
     }
 
+    public void update(String username, String email, String password) {
+        if(username != null && !username.isBlank()){
+            this.username = username;
+        }
+        if(email != null && !email.isBlank()){
+            this.email = email;
+        }
+        if(password != null && !password.isBlank()){
+            this.password = password;
+        }
+    }
+
     public static User from(UserDTO userDTO, PasswordEncoder passwordEncoder) {
         return User.builder()
                 .username(userDTO.getUsername())
