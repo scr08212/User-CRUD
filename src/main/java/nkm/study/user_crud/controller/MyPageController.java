@@ -27,8 +27,7 @@ public class MyPageController {
     public String mypage(@AuthenticationPrincipal CustomUserDetails userDetails,
                          Model model){
 
-        User user = userService.findById(userDetails.getUser().getId());
-        model.addAttribute("user", user);
+        model.addAttribute("user", userDetails.getUser());
         return "mypage";
     }
 
@@ -37,8 +36,9 @@ public class MyPageController {
                              @Valid UserDTO userDTO,
                              BindingResult bindingResult,
                              Model model){
+
         if(bindingResult.hasErrors()){
-            return "signup";
+            return "mypage";
         }
         if (!userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
             model.addAttribute("error", "비밀번호가 같지 않습니다");
@@ -47,7 +47,7 @@ public class MyPageController {
 
         userService.updateUser(userDetails.getUser().getId(), userDTO);
 
-        return "redirect:/mypage";
+        return "mypage";
     }
 
     @PostMapping("/mypage/delete")
