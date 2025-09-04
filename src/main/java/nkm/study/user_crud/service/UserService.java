@@ -1,7 +1,7 @@
 package nkm.study.user_crud.service;
 
 import lombok.RequiredArgsConstructor;
-import nkm.study.user_crud.domain.User;
+import nkm.study.user_crud.domain.entity.User;
 import nkm.study.user_crud.domain.dto.UserDTO;
 import nkm.study.user_crud.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;

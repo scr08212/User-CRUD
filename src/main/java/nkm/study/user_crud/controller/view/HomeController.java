@@ -1,6 +1,6 @@
-package nkm.study.user_crud.controller;
+package nkm.study.user_crud.controller.view;
 
-import nkm.study.user_crud.domain.User;
+import nkm.study.user_crud.domain.entity.User;
 import nkm.study.user_crud.security.CustomUserDetails;
 import nkm.study.user_crud.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

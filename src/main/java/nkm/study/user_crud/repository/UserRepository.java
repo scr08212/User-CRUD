@@ -1,6 +1,6 @@
 package nkm.study.user_crud.repository;
 
-import nkm.study.user_crud.domain.User;
+import nkm.study.user_crud.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

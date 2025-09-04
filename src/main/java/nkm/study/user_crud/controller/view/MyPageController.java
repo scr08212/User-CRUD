@@ -1,18 +1,15 @@
-package nkm.study.user_crud.controller;
+package nkm.study.user_crud.controller.view;
 
 import jakarta.validation.Valid;
 import nkm.study.user_crud.domain.dto.UserDTO;
 import nkm.study.user_crud.security.CustomUserDetails;
-import nkm.study.user_crud.domain.User;
 import nkm.study.user_crud.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class MyPageController {

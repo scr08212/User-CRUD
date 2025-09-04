@@ -1,7 +1,7 @@
 package nkm.study.user_crud.service;
 
 import jakarta.transaction.Transactional;
-import nkm.study.user_crud.domain.User;
+import nkm.study.user_crud.domain.entity.User;
 import nkm.study.user_crud.domain.dto.UserDTO;
 import nkm.study.user_crud.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;

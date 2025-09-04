@@ -1,4 +1,4 @@
-package nkm.study.user_crud.controller;
+package nkm.study.user_crud.controller.view;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

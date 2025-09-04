@@ -1,4 +1,4 @@
-package nkm.study.user_crud.controller;
+package nkm.study.user_crud.controller.view;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -1,4 +1,4 @@
-package nkm.study.user_crud.domain;
+package nkm.study.user_crud.domain.entity;
 
 public enum  Role {
     ROLE_USER,

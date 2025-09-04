@@ -1,4 +1,4 @@
-package nkm.study.user_crud.controller;
+package nkm.study.user_crud.controller.view;
 
 import jakarta.validation.Valid;
 import nkm.study.user_crud.domain.dto.UserDTO;

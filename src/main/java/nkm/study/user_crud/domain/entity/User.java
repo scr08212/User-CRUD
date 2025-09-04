@@ -1,4 +1,4 @@
-package nkm.study.user_crud.domain;
+package nkm.study.user_crud.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
