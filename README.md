@@ -3,7 +3,7 @@
 간단한 회원 관리 CRUD 웹 애플리케이션 프로젝트입니다.  
 Spring Boot를 기반으로 하고, Docker와 AWS EC2를 활용해 배포까지 경험했습니다.
 
-[![시연 영상](https://img.youtube.com/vi/fOPCDN_jA1M/0.jpg)](https://youtu.be/fOPCDN_jA1M)
+▶️ [프로젝트 시연 영상](https://youtu.be/fOPCDN_jA1M)
 
 ## 프로젝트 개요
 - 목표: 단순 CRUD 기능 구현과 배포 경험 습득
