@@ -2,9 +2,13 @@ package nkm.study.user_crud.controller.view;
 
 import jakarta.validation.Valid;
 import nkm.study.user_crud.domain.dto.UserDTO;
+import nkm.study.user_crud.domain.entity.User;
 import nkm.study.user_crud.security.CustomUserDetails;
 import nkm.study.user_crud.service.UserService;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,19 +34,28 @@ public class MyPageController {
 
     @PostMapping("/mypage/update")
     public String updateUser(@AuthenticationPrincipal CustomUserDetails userDetails,
-                             @Valid UserDTO userDTO,
-                             BindingResult bindingResult,
+                             UserDTO userDTO,
                              Model model){
 
-        if(bindingResult.hasErrors()){
-            return "mypage";
-        }
         if (!userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
             model.addAttribute("error", "비밀번호가 같지 않습니다");
             return "mypage";
         }
 
         userService.updateUser(userDetails.getUser().getId(), userDTO);
+
+        User updatedUser = userService.findById(userDetails.getUser().getId());
+        CustomUserDetails updatedDetails = new CustomUserDetails(updatedUser);
+
+        Authentication newAuth = new UsernamePasswordAuthenticationToken(
+                updatedDetails,
+                userDetails.getPassword(),
+                updatedDetails.getAuthorities()
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+        model.addAttribute("user", updatedUser);
 
         return "mypage";
     }
